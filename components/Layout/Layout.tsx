@@ -14,9 +14,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <Header />
       </div>
       <div className="flex flex-col w-full bg-black grow">{children}</div>
-      <div className="bg-black">
-        <Footer />
-      </div>
     </div>
   );
 };
