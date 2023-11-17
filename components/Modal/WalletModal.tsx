@@ -1,17 +1,17 @@
-import React, { useCallback } from 'react';
-import { utils } from 'ethers';
+import React, { useCallback } from "react"
+import { utils } from "ethers"
 
-import { useModal } from '@contexts/modal';
-import { useStore } from '@store/store';
-import { WalletType } from '@type/common';
-import { StoreActionTypes } from '@type/store';
-import { configMetamask, configWalletConnect } from '@utils/provider';
+import { useModal } from "@contexts/modal"
+import { useStore } from "@store/store"
+import { WalletType } from "@type/common"
+import { StoreActionTypes } from "@type/store"
+import { configMetamask, configWalletConnect } from "@utils/provider"
 
 interface WalletModalProps {} // eslint-disable-line
 
 const WalletModal: React.FC<WalletModalProps> = () => {
-  const { dispatch } = useStore();
-  const { hideConnectModal } = useModal();
+  const { dispatch } = useStore()
+  const { setModal } = useModal()
 
   const handleConnectWallet = useCallback(
     async (wallet: WalletType) => {
@@ -19,23 +19,23 @@ const WalletModal: React.FC<WalletModalProps> = () => {
         const { account, provider } =
           wallet === WalletType.WALLET_CONNECT
             ? await configWalletConnect(dispatch)
-            : await configMetamask(dispatch);
+            : await configMetamask(dispatch)
 
         if (account) {
-          const balance = await provider?.getBalance(account);
+          const balance = await provider?.getBalance(account)
           balance &&
             dispatch({
               type: StoreActionTypes.SET_BALANCE,
               payload: { balance: utils.formatEther(balance) },
-            });
+            })
         }
       } catch (error) {
-        console.error(error);
+        console.error(error)
       } finally {
       }
     },
     [dispatch]
-  );
+  )
 
   return (
     <div
@@ -51,7 +51,9 @@ const WalletModal: React.FC<WalletModalProps> = () => {
             <button
               type="button"
               className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-              onClick={hideConnectModal}
+              onClick={() => {
+                setModal(null)
+              }}
             >
               <svg
                 className="w-5 h-5"
@@ -111,7 +113,7 @@ const WalletModal: React.FC<WalletModalProps> = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default WalletModal;
+export default WalletModal

@@ -1,54 +1,51 @@
-import React, { createContext, useCallback, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useState } from "react"
 
-import WalletModal from '@components/Modal/WalletModal';
+import WalletModal from "@components/Modal/WalletModal"
+
+export enum ModalEnum {
+  WALLET_MODAL = "wallet-modal",
+  AUCTION_MODAL = "auction-modal",
+  INFO_MODAL = "info-modal",
+  REQUEST_MODAL = "request-modal",
+}
 
 export interface ModalContextProps {
-  isConnectModalShown: boolean;
-  showConnectModal: () => void;
-  hideConnectModal: () => void;
+  modal: ModalEnum | null
+  setModal: (modal: ModalEnum|null) => void
+  hideModal: () => void
 }
 
 const defaultContext: ModalContextProps = {
-  isConnectModalShown: false,
-  showConnectModal: () => null,
-  hideConnectModal: () => null,
-};
+  modal: null,
+  setModal: () => null,
+  hideModal: () => null,
+}
 
-export const ModalContext = createContext<ModalContextProps>(defaultContext);
+export const ModalContext = createContext<ModalContextProps>(defaultContext)
 
 export const ModalProvider: React.FC = ({ children }) => {
-  const [isConnectModalShown, setIsConnectModalShown] = useState(
-    defaultContext.isConnectModalShown
-  );
-
-  const showConnectModal = useCallback(
-    () => setIsConnectModalShown(true),
-    [setIsConnectModalShown]
-  );
-  const hideConnectModal = useCallback(
-    () => setIsConnectModalShown(false),
-    [setIsConnectModalShown]
-  );
+  const [modal, setModal] = useState(defaultContext.modal)
+  const hideModal = useCallback(() => setModal(null), [setModal])
 
   return (
     <ModalContext.Provider
       value={{
         ...defaultContext,
-        isConnectModalShown,
-        showConnectModal,
-        hideConnectModal,
+        modal,
+        setModal,
+        hideModal,
       }}
     >
       {children}
-      {isConnectModalShown && <WalletModal />}
+      {modal == ModalEnum.WALLET_MODAL && <WalletModal />}
     </ModalContext.Provider>
-  );
-};
+  )
+}
 
 export const useModal = (): ModalContextProps => {
-  const context = useContext(ModalContext);
+  const context = useContext(ModalContext)
   if (context === undefined) {
-    throw new Error('useModal must be used within a ModalProvider');
+    throw new Error("useModal must be used within a ModalProvider")
   }
-  return context;
-};
+  return context
+}
